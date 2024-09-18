@@ -12,7 +12,7 @@ using Talabat.Repository.Data;
 namespace Talabat.Repository.Data.Migrations
 {
     [DbContext(typeof(TalabatDbContext))]
-    [Migration("20240917210358_InitialCreate")]
+    [Migration("20240918170949_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
