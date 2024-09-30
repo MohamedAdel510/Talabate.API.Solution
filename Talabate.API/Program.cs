@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositories;
 using Talabat.Repository;
 using Talabat.Repository.Data;
+using Talabate.API.Errors;
+using Talabate.API.Helper;
+using Talabate.API.Middelwares;
 
 namespace Talabate.API
 {
@@ -26,6 +30,23 @@ namespace Talabate.API
 			});
 			//builder.Services.AddScoped<IGenaricRepository<Product>, GenaricRepository<Product>>();
 			builder.Services.AddScoped(typeof(IGenaricRepository<>), typeof(GenaricRepository<>));
+			//builder.Services.AddAutoMapper(m => m.AddProfile(new MappingProfile()));
+			builder.Services.AddAutoMapper(typeof(MappingProfile));
+			builder.Services.Configure<ApiBehaviorOptions>(options =>
+			{
+				options.InvalidModelStateResponseFactory = (actionContext) =>
+				{
+					var errors = actionContext.ModelState.Where(M => M.Value.Errors.Count() > 0)
+														 .SelectMany(M => M.Value.Errors)
+														 .Select(E => E.ErrorMessage)
+														 .ToArray();
+					var validationErrorResponse = new ApiValidationErrorResponse()
+					{
+						Errors = errors
+					};
+					return new BadRequestObjectResult(validationErrorResponse);
+				};
+			});
 			#endregion
 
 
@@ -53,9 +74,13 @@ namespace Talabate.API
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
+				app.UseMiddleware<ExceptionMiddelware>();
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
+			app.UseStatusCodePagesWithRedirects("/errors/{0}");
+
+			app.UseStaticFiles();
 
 			app.UseHttpsRedirection();
 

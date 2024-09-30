@@ -12,22 +12,6 @@ namespace Talabat.Repository.Data
 	{
 		public static async Task SeedAsync(TalabatDbContext dbContext)
 		{
-			#region Product
-			if (!dbContext.Products.Any())
-			{
-				var ProductData = File.ReadAllText("../Talabat.Repository/Data/DataSeed/products.json");
-				var Products = JsonSerializer.Deserialize<List<Product>>(ProductData);
-				if (Products?.Count() > 0)
-				{
-					foreach (var Product in Products)
-					{
-						await dbContext.Set<Product>().AddAsync(Product);
-					}
-					await dbContext.SaveChangesAsync();
-				}
-			}
-			#endregion
-
 			#region Brand
 			if (!dbContext.ProductBrands.Any())
 			{
@@ -54,6 +38,22 @@ namespace Talabat.Repository.Data
 					foreach (var Type in Types)
 					{
 						await dbContext.Set<ProductType>().AddAsync(Type);
+					}
+					await dbContext.SaveChangesAsync();
+				}
+			}
+			#endregion
+
+			#region Product
+			if (!dbContext.Products.Any())
+			{
+				var ProductData = File.ReadAllText("../Talabat.Repository/Data/DataSeed/products.json");
+				var Products = JsonSerializer.Deserialize<List<Product>>(ProductData);
+				if (Products?.Count() > 0)
+				{
+					foreach (var Product in Products)
+					{
+						await dbContext.Set<Product>().AddAsync(Product);
 					}
 					await dbContext.SaveChangesAsync();
 				}
