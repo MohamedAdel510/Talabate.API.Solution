@@ -17,6 +17,12 @@ namespace Talabat.Core.Specifications
 
 		//2- Include(P => P.ProductBrand).Include(P=>P.ProductType) => Includes
 		public List<Expression<Func<T, object>>> Includes { get; set; }
+		
+		public Expression<Func<T, object>> OrderBy { get; set; }
+		public Expression<Func<T, object>> OrderByDec {  get; set; }
 
+		public int Skip { get; set; }
+		public int Take { get; set; }
+		public bool IsPaginationEnable { get; set; }
 	}
 }
